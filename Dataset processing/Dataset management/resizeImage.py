@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 """
-Created on Mon Nov  1 13:17:52 2021
+Created on Mon Nov  1 2021
 
-@author: anton
+@author: Cris
 
-https://python.plainenglish.io/automatically-resize-all-your-images-with-python-36f5b6dfc275
+Adapted from https://python.plainenglish.io/automatically-resize-all-your-images-with-python-36f5b6dfc275
 """
 
 import cv2
