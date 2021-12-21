@@ -1,0 +1,5 @@
+classes = 3
+train = /content/gdrive/MyDrive/FasterRCNN2/dataset/train.txt
+valid = /content/gdrive/MyDrive/FasterRCNN2/dataset/valid.txt
+names = /content/gdrive/MyDrive/FasterRCNN2/dataset/yolo/obj.names
+backup = /mydrive/FasterRCNN2/dataset/yolo/backup
