@@ -8,15 +8,15 @@ Dataset management
   
   * resizeImage.py - Adapted from Reine (2021), resizes images to the desired number of pixels to avoid excessively long loading times
   
-  * remove.jpg\_.py - Changes the file name as required
+  * changeFileName.py - Changes the file name as required
 
 Processing pipelines
 
-  * panoToCubeLiteGibson.py - Converts panoramic images to cube faces
+  * panoToCubes.py - Converts panoramic images to cube faces
   
-  * stereoWIP.py - Adapted from Yang (2018), converts panoramic images to stereographic projections
+  * panoToStereos.py - Adapted from Yang (2018), converts panoramic images to stereographic projections
   
-  * PanoTiling.py - Adapted from Kufuor (2020), subdivides panoramic images into eight tiles
+  * panoToTiles.py - Adapted from Kufuor (2020), subdivides panoramic images into eight tiles
 
 # Model training
 Adapted from The AI Guy (2020) - see source for folder/file structure:
