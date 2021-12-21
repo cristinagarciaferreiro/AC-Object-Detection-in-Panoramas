@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 """
-Created on Wed Nov 10 11:20:26 2021
+Created on Wed Nov 10 2021
 @author: Cris
-Adapted from John Kufuor
+Adapted from Jam516/MEP-object-detection-/Dataset Management/Tile_img.py
 """
 
 import numpy as np
