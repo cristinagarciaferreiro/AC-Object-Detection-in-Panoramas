@@ -19,7 +19,7 @@ Processing pipelines
   * PanoTiling.py - Adapted from Kufuor (2020), subdivides panoramic images into eight tiles
 
 # Model training
-Adapted from The AI Guy (2020):
+Adapted from The AI Guy (2020) - see source for folder/file structure:
 
   * YOLOv4_Training_Tutorial.ipynb - Trains the model according to the parameters set in the configuration file, the image paths and object classes in the files below
   
