@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 26 18:26:34 2021
+Created on Tue Oct 26 2021
 
-@author: anton
+@author: Cris
 
 Adapted from https://www.reddit.com/r/learnpython/comments/2yayel/how_to_remove_part_of_a_file_name_recursively_in/
 """
