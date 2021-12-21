@@ -33,7 +33,7 @@ Adapted from The AI Guy (2020):
 
   * ModelOnPython.py - Adapted from cyberdong (2021), allows to use the model locally
   
-Adapted from Cartucho (2018): 
+Adapted from Cartucho (2018) - see source for folder/file structure: 
   
   * convert_dr_yolo.py - Converts the result files (detections) outputted by the model into files in a format compatible for comparison with the ground truths
   
