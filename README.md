@@ -4,9 +4,9 @@ MEng Thesis. Detecting AC components using YOLOv4: Comparison of panoramic image
 # Dataset processing
 Dataset management
 
-  * PNGtoJPG.py - Converts PNG files to JPG files, the format of the majority
+  * PNGtoJPG.py - Converts PNG files to JPG files
   
-  * resizeImage.py - Adapted from Reine (2021), resizes images to the desired number of pixels to avoid excessively long loading times
+  * resizeImage.py - Adapted from Reine (2021), resizes images to the desired number of pixels
   
   * changeFileName.py - Changes the file name as required
 
@@ -23,9 +23,9 @@ Adapted from The AI Guy (2020) - see source for folder/file structure:
 
   * YOLOv4_Training_Tutorial.ipynb - Trains the model according to the parameters set in the configuration file, the image paths and object classes in the files below
   
-  * generate_train.py, generate_valid.py, and generate_test.py - Loop through the images and create one file with all the training image paths, another for validation image paths and another for testing
+  * generate_train.py, generate_valid.py, and generate_test.py - Loops through the images and creates one file with all the training image paths, another for validation image paths and another for testing
   
-  * object.names and object.data - State the class names and the paths to training, validation and testing images for the model to read
+  * object.names and object.data - States the class names and the paths to training, validation and testing images for the model to read
   
   * yolov4-obj.cfg - Configuration file, states the parameters
 
