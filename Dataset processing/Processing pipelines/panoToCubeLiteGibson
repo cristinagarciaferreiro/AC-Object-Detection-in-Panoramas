@@ -1,0 +1,166 @@
+from CyberbuildLab - MEP4BIMScripts
+
+import numpy as np
+import cv2 as cv
+import math
+import glob
+import os
+
+# get x,y,z coords from out image pixels coords
+# i,j are pixel coords
+# face_id is face number
+# cube_width is cube face edge length
+def pixel_index_to_xyz(i, j, face_id, cube_width):
+    a = 2.0 * float(i) / cube_width
+    b = 2.0 * float(j) / cube_width
+    (x, y, z) = (0.0, 0.0, 0.0)
+
+    if face_id == 0:  # back
+        (x, y, z) = (-1.0, 1.0 - a, 3.0 - b)
+    elif face_id == 1:  # left
+        (x, y, z) = (a - 3.0, -1.0, 3.0 - b)
+    elif face_id == 2:  # front
+        (x, y, z) = (1.0, a - 5.0, 3.0 - b)
+    elif face_id == 3:  # right
+        (x, y, z) = (7.0 - a, 1.0, 3.0 - b)
+    elif face_id == 4:  # top
+        (x, y, z) = (b - 1.0, a - 5.0, 1.0)
+    elif face_id == 5:  # bottom
+        (x, y, z) = (5.0 - b, a - 5.0, -1.0)
+    return x, y, z
+
+
+def convert_to_cube_map(pano, cube_map):
+    cube_width = pano.shape[1]/4   # the length of each edge in pixels
+    for col in range(cube_map.shape[1]):
+        face = int(col / cube_width)  # 0 - back, 1 - left 2 - front, 3 - right
+        if face == 2:
+            rng = range(0, int(cube_width*3))
+        else:
+            rng = range(int(cube_width), int(cube_width*2))
+
+        for row in rng:
+            if row < cube_width:
+                face_id = 4  # top
+            elif row >= 2*cube_width:
+                face_id = 5  # bottom
+            else:
+                face_id = face
+
+            (x, y, z) = pixel_index_to_xyz(col, row, face_id, cube_width)
+            theta = math.atan2(y, x)  # range -pi to pi
+            r = math.hypot(x, y)
+            phi = math.atan2(z, r)  # range -pi/2 to pi/2
+            # source img coords
+            uf = (2.0*cube_width*(theta + math.pi)/math.pi)
+            vf = (2.0*cube_width*(math.pi/2 - phi)/math.pi)
+            # Use bilinear interpolation between the four surrounding pixels
+            ui = math.floor(uf)  # coord of pixel to bottom left
+            vi = math.floor(vf)
+            u2 = ui+1       # coords of pixel to top right
+            v2 = vi+1
+            mu = uf-ui      # fraction of way across pixel
+            nu = vf-vi
+            # Pixel values of four corners
+            A = pano[np.clip(vi, 0, pano.shape[0]-1), ui % pano.shape[1]]
+            B = pano[np.clip(vi, 0, pano.shape[0]-1), u2 % pano.shape[1]]
+            C = pano[np.clip(v2, 0, pano.shape[0]-1), ui % pano.shape[1]]
+            D = pano[np.clip(v2, 0, pano.shape[0]-1), u2 % pano.shape[1]]
+            # interpolate
+            (r, g, b) = (
+              A[0]*(1-mu)*(1-nu) + B[0]*mu*(1-nu) + C[0]*(1-mu)*nu+D[0]*mu*nu,
+              A[1]*(1-mu)*(1-nu) + B[1]*mu*(1-nu) + C[1]*(1-mu)*nu+D[1]*mu*nu,
+              A[2]*(1-mu)*(1-nu) + B[2]*mu*(1-nu) + C[2]*(1-mu)*nu+D[2]*mu*nu)
+
+            cube_map[row, col] = (int(round(r)), int(round(g)), int(round(b)))
+
+
+def cubemap_converter(input_img_path, output_path):
+    img_in = cv.imread(input_img_path, cv.IMREAD_COLOR)
+
+    if (img_in.shape[1] > 2048):
+        dim = (2048, 1024)
+        img_in = cv.resize(img_in, dim, interpolation=cv.INTER_AREA)
+
+    for it in range(4):
+        print('iteration ' + str(it+1) + ' of 4')
+# THIS IS WHAT ALLOWS FOR DIFFERENT PERSPECTIVES
+        nPixels = round(img_in.shape[1] / 8) * it
+        img = cv.hconcat([img_in[:,nPixels:img_in.shape[1]], img_in[:,0:nPixels]])
+# UP TO HERE
+
+        # convert to cubemap
+        house_path = input_img_path.rsplit('//', 1)[0]
+        house_name = house_path.rsplit('/', 1)[1]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + ".png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        img_out = np.zeros((round(img_in.shape[1]*3/4), img_in.shape[1], 3), np.uint8)
+        convert_to_cube_map(img, img_out)
+        cv.imwrite(output_file_name, img_out)
+
+        # divide the image in the 6 cube faces.
+        # back
+        backImg = img_out[round(img_out.shape[0]/3):round(img_out.shape[0]*2/3), 0:round(img_out.shape[1]/4)]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_back.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, backImg)
+
+        # left
+        leftImg = img_out[round(img_out.shape[0]/3):round(img_out.shape[0]*2/3), round(img_out.shape[1]/4):round(img_out.shape[1]/2)]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_left.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, leftImg)
+
+        # front
+        frontImg = img_out[round(img_out.shape[0]/3):round(img_out.shape[0]*2/3), round(img_out.shape[1]/2):round(img_out.shape[1]*3/4)]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_front.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, frontImg)
+
+        # right
+        rightImg = img_out[round(img_out.shape[0]/3):round(img_out.shape[0]*2/3), round(img_out.shape[1]*3/4):img_out.shape[1]]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_right.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, rightImg)
+
+        # top
+        topImg = img_out[0:round(img_out.shape[0]/3), round(img_out.shape[1]/2):round(img_out.shape[1]*3/4)]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_top.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, topImg)
+
+        # bottom
+        bottomImg = img_out[round(img_out.shape[0]*2/3):img_out.shape[0], round(img_out.shape[1]/2):round(img_out.shape[1]*3/4)]
+        img_name = input_img_path.rsplit('/', 1)[1].split('.')[0] + "_cubemap_" + str(it) + "_bottom.png"
+        output_file_name = output_path + "/" + house_name + '_' + img_name
+        cv.imwrite(output_file_name, bottomImg)
+
+    print("finished image " + input_img_path)
+
+
+images_path = 'C:/Users/anton/Desktop/Datasets/Checking Duration/WallPanos55'
+#path = os.path.join(images_path.rsplit('/', 1)[0], "cubes") #Kripis
+path = os.path.join(images_path.rsplit('/', 1)[0], "HousesCubes2") #Gibson
+path = path.replace('\\', '/')
+if not os.path.isdir(path):
+    os.mkdir(path)
+
+
+# this one for Gibson
+for house_name in glob.glob(images_path + '/*/'):
+    house_name = house_name.replace('\\', '/')
+    for filename in glob.glob(house_name + '*.jpg'):
+        # '/pano/rgb/*.png'
+        filename = filename.replace('\\', '/')
+        print("Converting image " + filename)
+        cubemap_converter(filename, path)
+
+
+# this one for Kripis
+# for filename in glob.glob(images_path + '*.png'):
+#     filename = filename.replace('\\', '/')
+#     path = path.replace('\\', '/')
+#     print("Converting image " + filename )
+#     cubemap_converter(filename, path)
+
+print("DONE!!!")
