@@ -250,11 +250,8 @@ with open(IN_FILE) as infile:
 """
 Created on Wed Nov 24 16:16:25 2021
 
-@author: anton
-
 2. Deletes empty detection files and detections at the edge of images
 
-margin3 deletes 15350546950_26effc3275_fCutIn8_z0_i3_randomiser2432403
 """
 
 import os
@@ -323,11 +320,8 @@ for root, dirnames, files in os.walk(dir_path, topdown=False):
 """
 Created on Thu Nov 25 11:09:44 2021
 
-@author: anton
-
 3. Compares files for similarity and deletes files that are very similar
 
-Check the margin and similarityMargin!
 """
 
 import os
@@ -388,8 +382,6 @@ for root, dirnames, files in os.walk(dir_path, topdown=False):
 
 """
 Created on Fri Nov 26 11:57:50 2021
-
-@author: anton
 
 4. Merge files with same beginning name
 
