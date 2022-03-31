@@ -246,7 +246,6 @@ with open(IN_FILE) as infile:
 
 
 """
-Created on Wed Nov 24 16:16:25 2021
 
 2. Deletes empty detection files and detections at the edge of images
 
@@ -319,11 +318,9 @@ for root, dirnames, files in os.walk(dir_path, topdown=False):
                     
 
 """
-Created on Thu Nov 25 11:09:44 2021
 
 3. Compares files for similarity and deletes files that are very similar
 
-Check the margin and similarityMargin!
 """
 
 import os
@@ -383,16 +380,9 @@ for root, dirnames, files in os.walk(dir_path, topdown=False):
                                         os.remove(full_name_current)
 
 """
-Created on Fri Nov 26 11:57:50 2021
 
 4. Merge files with same beginning name
 
-For each file if a file where full_name = name does not exist
-    Create it
-    Append the contents to the new file
-If it does exist
-    Append the contents to the new file
-Delete all files that contain the word random
 """
 
 
