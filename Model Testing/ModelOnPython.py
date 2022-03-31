@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Nov  6 21:08:54 2021
-
 Adapted from
 https://github.com/cyberdong/yolo_opencv-python_cpu
-
-My computer and most university computers (at least most available to students) do not
-have NVIDIA, needed to run YOLOv4 with GPU, so it would be slow to train locally
 """
 
 import numpy as np
