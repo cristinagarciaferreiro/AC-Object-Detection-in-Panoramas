@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 23 15:29:05 2021
-
-Adapted from (but so far from it at this point...)
+Adapted from
 https://github.com/Cartucho/mAP
 """
 
